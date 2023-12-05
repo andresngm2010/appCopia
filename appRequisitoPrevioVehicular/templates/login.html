@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <html lang="en">
+    <section  class="cuerpo">
+        <section  class="contenedor1">
+            <h2 >Consulta de Multas Pendientes</h2>
+                <form name="consulta" method="post" action="{% url 'consultar_vehiculo'%}">
+                    {% csrf_token %}
+                    <h4>Seleccione el tipo de búsqueda</h4>
+                    <div class="distribuir">
+                        <input type="radio" name="opcion" value="Placa" checked>
+                        <label for="txtOpcion">Placa</label>
+                        <input type="radio" name="opcion" value="Chasis">
+                        <label for="txtOpcion">Chasis</label>
+                    </div>
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-danger alert-dismissable fade show" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    <h4>Ingrese dato</h4>
+                    <div>
+                        <input type="text" name="dato" value="" required>
+                        <button class="botonInterno" type="submit">Consultar</button>
+                    </div>
+                </form>
+        </section>
+    </section>
+    </html>
+{% endblock %}

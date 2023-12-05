@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <section  class="cuerpo">
+        <section  class="contenedor">
+            <h2>Registrar multa</h2>
+            <div class="formulario">
+                <form method="POST">{% csrf_token %}
+                    {{ form.as_p }}
+                    <div class="botones">
+                        <div class="botonIzq">
+                            <button class="botonInterno" type="submit">Guardar</button>
+                        </div>
+                        <div class="botonDer">
+                            <a href="{% url 'vehiculos_list' %}"><button class="botonInterno" type="button">Cancelar</button></a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </section>
+{% endblock %}

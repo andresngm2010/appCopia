@@ -1,0 +1,36 @@
+	.texto-transito{
+		text-align:center;
+	}
+	.button-salir{
+		background-color: #174d4d;
+		color: #f8f9f9;
+	}
+	.color-azul{
+		background-color: #d6edf2;
+	}
+	.texto{
+		color: #03363d;
+	}
+	.contenedor{
+		width:75%;
+		margin: 50px;
+		background-color: #ffffff;
+		min-height: 100%;
+		display: flex;
+		align-items: center;
+		flex-direction: column;
+		border-radius:5%;
+	}
+	.contenedor *{
+		margin-bottom: 1%;
+		margin-top: 1%;
+	}
+	body{
+		background-color: #f2f2f2;
+	}
+	.agencia{
+		font-family: 'Permanent Marker', cursive;
+		font-size: 25px;
+		margin:0;
+		padding:0;
+	}

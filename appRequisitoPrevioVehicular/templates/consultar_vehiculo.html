@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <section  class="cuerpo">
+        <section  class="contenedor">
+        	<div class="botones margin-left1">
+				<div class="botonIzq"><a href="{% url 'authentication' %}"><button class="botonInterno" type="button">Hacer Nueva Consulta</button></a></div>
+        	</div>
+            <h2>Información del Vehículo</h2>
+            <div>PLACA: {{ vehiculo.placa }}</div>
+            <div>AÑO: {{ vehiculo.año }}</div>
+            <div>MARCA: {{ vehiculo.marca }}</div>
+            <div>MODELO: {{ vehiculo.modelo }}</div>
+            <h2>Valores pendientes</h2>
+            <div class="tabla">
+	            <table>
+					<tr>
+					<th>Descripción</th>
+					<th>Valor</th>
+					<th>Año</th>
+					</tr>
+					{% for multa in lista_multas %}
+                        <tr>
+                        <td>{{ multa.descripcion }}</td>
+                        <td>{{ multa.valor }}</td>
+                        <td>{{ multa.año }}</td>
+                        </tr>
+					{% endfor %}
+				</table>
+			</div>
+        </section>
+    </section>
+{% endblock %}

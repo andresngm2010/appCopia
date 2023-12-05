@@ -1,0 +1,52 @@
+{% load static %}
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Limelight&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Limelight&family=Merriweather+Sans:wght@800&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="{% static 'css/contenedor.css'%}">
+        <link rel="stylesheet" href="{% static 'css/login.css' %}">
+        <link rel="stylesheet" href="{% static 'css/consulta.css' %}">
+        <title>Agencia Nacional Transito</title>
+    </head>
+    <body>
+        <header>
+            <nav class="navbar navbar-dark color-azul">
+                <div class="container-fluid">
+                    <div class="h-10 w-10 texto-transito">
+                        <span class="navbar-brand m-0 h1 agencia" style="color: #03363d">Proyecto para la prueba de</span>
+                        <br>
+                        <span class="navbar-brand m-0 h1 agencia" style="color: #03363d">APIS</span>
+                    </div>
+                    {% if not user.is_authenticated %}
+                        <div class="navbar navbar-dark">
+                            <form method="post" action="{% url 'authentication/login_intent' %}" >
+                                {% csrf_token %}
+                                <input type="text" name="usuario" value="" placeholder="Usuario" required>
+                                <input type="password" name="contraseña" value="" placeholder="Contraseña" required>
+                                <button class="button-ingresar" type="submit">Ingresar</button>
+                            </form>
+                        </div>
+                    {% endif %}
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'logs_list' %}"><button class="btn btn-secondary button-salir" type="button" >Ver logs</button></a>
+                        <a href="{% url 'authentication/logout_view' %}"><button class="btn btn-secondary button-salir" type="button" >Cerrar Sesión</button></a>
+                    {% endif %}
+                </div>
+            </nav>
+        </header>
+        <div class="barra_verde"></div>
+        {% block content %}
+        {% endblock %}
+        <footer>
+            <div class="pie">
+                <p>Escuela Politécnica Nacional <br> Facultad de Sistemas <br> Ingeniería de Software</p>
+            </div>
+        </footer>
+    </body>
+</html>
