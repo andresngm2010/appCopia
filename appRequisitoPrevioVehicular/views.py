@@ -12,6 +12,7 @@ from .forms import VehiculoForm, MultaForm, UsuarioForm
 from appRequisitoPrevioVehicular.encrypt_util import *
 
 import requests
+import json
 
 
 def login_view(request):
@@ -47,8 +48,19 @@ def login_intent(request):
 
 
 def vehiculos_list(request):
-    lista_vehiculos = Vehiculo.objects.all()
-    return render(request, 'vehiculos_list.html', {'lista_vehiculos': lista_vehiculos})
+    lista_vehiculos = requests.get('http://127.0.0.1:8000/vehiculo').json()
+    lista_vehiculos2 = []
+    for vehiculo in lista_vehiculos:
+        auxV = Vehiculo()
+        auxV.pk = vehiculo[0]
+        auxV.propietario = vehiculo[1]
+        auxV.placa = vehiculo[2]
+        auxV.marca = vehiculo[3]
+        auxV.año = vehiculo[4]
+        auxV.modelo = vehiculo[5]
+        auxV.chasis = vehiculo[6]
+        lista_vehiculos2.append(auxV)
+    return render(request, 'vehiculos_list.html', {'lista_vehiculos': lista_vehiculos2})
 
 
 def registrar_vehiculo(request):
@@ -56,7 +68,6 @@ def registrar_vehiculo(request):
         form = VehiculoForm(request.POST)
         if form.is_valid():
             vehiculo = form.save(commit=False)
-            vehiculo.save()
             aux = str(vehiculo.pk)
             loger = LogEntry(user=request.user, object_id=vehiculo.pk,
                              object_repr='Vehiculo object(' + aux + ')',
@@ -64,6 +75,8 @@ def registrar_vehiculo(request):
                                                                   model='vehiculo'), action_flag=1,
                              change_message=[{"added": {'Vehiculo object(' + aux + ')'}}])
             loger.save()
+            parametros = { 'propietario': vehiculo.propietario, 'placa':vehiculo.placa, 'marca':vehiculo.marca, 'año':vehiculo.año, 'modelo':vehiculo.modelo, 'chasis':vehiculo.chasis }
+            requests.post('http://127.0.0.1:8000/vehiculo', json=parametros)
             return redirect('vehiculos_list')
     else:
         form = VehiculoForm()
@@ -82,9 +95,6 @@ def registrar_usuario(request):
                              change_message=[{"added": {'Usuario object(' + aux + ')'}}])
             loger.save()
             parametros = "{\"nombre\":\""+usuario.nombre+"\", \"apellido\":\""+usuario.apellido+"\", \"email\":\""+usuario.email+"\", \"cedula\":\""+usuario.cedula+"\", \"telefono\":\""+usuario.telefono+"\"}"
-            print(parametros)
-            #parsed_json = eval(parametros)
-            #print(parsed_json)
             requests.post('http://127.0.0.1:8000/usuario', parametros)
             return redirect('vehiculos_list')
     else:
@@ -93,12 +103,22 @@ def registrar_usuario(request):
 
 
 def editar_vehiculo(request, pk):
-    vehiculo = get_object_or_404(Vehiculo, pk=pk)
+    args = {'primary_key': pk}
+    response = requests.get('http://127.0.0.1:8000/vehiculo/{pk}', params=args).json()
+    vehiculo = Vehiculo()
+    vehiculo.pk = response[0][0]
+    vehiculo.propietario = response[0][1]
+    vehiculo.placa = response[0][2]
+    vehiculo.marca = response[0][3]
+    vehiculo.año = response[0][4]
+    vehiculo.modelo = response[0][5]
+    vehiculo.chasis = response[0][6]
     if request.method == "POST":
         form = VehiculoForm(request.POST, instance=vehiculo)
         if form.is_valid():
             vehiculo = form.save(commit=False)
-            vehiculo.save()
+            parametros = { 'propietario': vehiculo.propietario, 'placa':vehiculo.placa, 'marca':vehiculo.marca, 'año':vehiculo.año, 'modelo':vehiculo.modelo, 'chasis':vehiculo.chasis }
+            response = requests.post('http://127.0.0.1:8000/vehiculo/{pk}', json = parametros, params=args)
             aux = str(vehiculo.pk)
             loger = LogEntry(user=request.user, object_id=vehiculo.pk,
                              object_repr='Vehiculo object(' + aux + ')',
@@ -113,20 +133,46 @@ def editar_vehiculo(request, pk):
 
 
 def listar_multas(request, pk):
-    vehiculo = get_object_or_404(Vehiculo, pk=pk)
-    vehiculo.placa = vehiculo.placa
-    lista_multas = Multa.objects.filter(vehiculo=vehiculo)
-    return render(request, 'multas_list.html', {'lista_multas': lista_multas, 'vehiculo': vehiculo})
+    args = {'primary_key': pk}
+    response = requests.get('http://127.0.0.1:8000/vehiculo/{pk}', params=args).json()
+    vehiculo = Vehiculo()
+    vehiculo.pk = response[0][0]
+    vehiculo.propietario = response[0][1]
+    vehiculo.placa = response[0][2]
+    vehiculo.marca = response[0][3]
+    vehiculo.año = response[0][4]
+    vehiculo.modelo = response[0][5]
+    vehiculo.chasis = response[0][6]
+    lista_multas = requests.get('http://127.0.0.1:8000/multa/{pk}', params=args).json()
+    lista_multas2 = []
+    for multa in lista_multas:
+        auxM = Multa()
+        auxM.pk = multa[0]
+        auxM.vehiculo = vehiculo
+        auxM.valor = multa[2]
+        auxM.año = multa[3]
+        auxM.descripcion = multa[4]
+        lista_multas2.append(auxM)
+    return render(request, 'multas_list.html', {'lista_multas': lista_multas2, 'vehiculo': vehiculo})
 
 
 def registrar_multa(request, pk):
-    vehiculo = get_object_or_404(Vehiculo, pk=pk)
+    args = {'primary_key': pk}
+    response = requests.get('http://127.0.0.1:8000/vehiculo/{pk}', params=args).json()
+    vehiculo = Vehiculo()
+    vehiculo.pk = response[0][0]
+    vehiculo.propietario = response[0][1]
+    vehiculo.placa = response[0][2]
+    vehiculo.marca = response[0][3]
+    vehiculo.año = response[0][4]
+    vehiculo.modelo = response[0][5]
+    vehiculo.chasis = response[0][6]
     if request.method == "POST":
         form = MultaForm(request.POST)
         if form.is_valid():
             multa = form.save(commit=False)
-            multa.vehiculo = vehiculo
-            multa.save()
+            parametros = { 'vehiculo': vehiculo.pk, 'valor':multa.valor, 'año':multa.año, 'descripcion':multa.descripcion}
+            response = requests.post('http://127.0.0.1:8000/multa', json = parametros)
             aux = str(multa.pk)
             loger = LogEntry(user=request.user, object_id=multa.pk,
                              object_repr='Multa object(' + aux + ')',
@@ -161,9 +207,19 @@ def consultar_vehiculo(request):
 
 
 def eliminar_vehiculo(request, pk):
-    vehiculo = get_object_or_404(Vehiculo, pk=pk)
+    args = {'primary_key': pk}
+    response = requests.get('http://127.0.0.1:8000/vehiculo/{pk}', params=args).json()
+    vehiculo = Vehiculo()
+    vehiculo.pk = response[0][0]
+    vehiculo.propietario = response[0][1]
+    vehiculo.placa = response[0][2]
+    vehiculo.marca = response[0][3]
+    vehiculo.año = response[0][4]
+    vehiculo.modelo = response[0][5]
+    vehiculo.chasis = response[0][6]
     aux = str(vehiculo.pk)
-    vehiculo.delete()
+    response = requests.delete('http://127.0.0.1:8000/vehiculo', params=args)
+    print(response)
     loger = LogEntry(user=request.user, object_id=vehiculo.pk,
                      object_repr='Vehiculo object(' + aux + ')',
                      content_type=ContentType.objects.get(app_label='appRequisitoPrevioVehicular',
