@@ -5,6 +5,7 @@ urlpatterns = [
     path('', views.login_view, name='authentication'),
     path('login/intent/', views.login_intent, name='authentication/login_intent'),
     path('listar_vehiculos', views.vehiculos_list, name='vehiculos_list'),
+    path('listar_usuarios', views.usuarios_list, name='usuarios_list'),
     path('registrar_vehiculo', views.registrar_vehiculo, name='registrar_vehiculo'),
     path('registrar_usuario', views.registrar_usuario, name='registrar_usuario'),
     path('editar_vehiculo/<int:pk>', views.editar_vehiculo, name='editar_vehiculo'),

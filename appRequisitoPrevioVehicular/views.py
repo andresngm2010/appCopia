@@ -63,6 +63,21 @@ def vehiculos_list(request):
     return render(request, 'vehiculos_list.html', {'lista_vehiculos': lista_vehiculos2})
 
 
+def usuarios_list(request):
+    lista_usuarios = requests.get('http://127.0.0.1:8000/usuario').json()
+    lista_usuarios2 = []
+    for usuario in lista_usuarios:
+        auxU = Usuario()
+        auxU.pk = usuario[0]
+        auxU.nombre = usuario[1]
+        auxU.apellido = usuario[2]
+        auxU.email = usuario[3]
+        auxU.cedula = usuario[4]
+        auxU.telefono = usuario[5]
+        lista_usuarios2.append(auxU)
+    return render(request, 'usuarios_list.html', {'lista_usuarios': lista_usuarios2})
+
+
 def registrar_vehiculo(request):
     if request.method == "POST":
         form = VehiculoForm(request.POST)
